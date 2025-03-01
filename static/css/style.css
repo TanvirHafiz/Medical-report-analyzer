@@ -1,0 +1,29 @@
+.prose {
+    line-height: 1.6;
+    color: #374151;
+}
+
+.prose p {
+    margin-bottom: 1.5em;
+}
+
+#drop-zone {
+    transition: all 0.3s ease;
+}
+
+#drop-zone:hover {
+    background-color: #f8fafc;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+} 

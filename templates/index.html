@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">Medical Report Analyzer</h1>
+            <p class="text-gray-600">Upload your medical test report or describe your symptoms for instant analysis</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="max-w-3xl mx-auto mb-6">
+            <div class="flex border-b border-gray-200">
+                <button id="report-tab" class="px-6 py-2 font-medium text-blue-600 border-b-2 border-blue-600">Report Analysis</button>
+                <button id="symptoms-tab" class="px-6 py-2 font-medium text-gray-500 hover:text-blue-600">Symptoms Analysis</button>
+                <button id="medicine-tab" class="px-6 py-2 font-medium text-gray-500 hover:text-blue-600">Medicine Info</button>
+            </div>
+        </div>
+
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <!-- Report Analysis Section -->
+            <div id="report-section">
+                <div class="upload-container mb-8">
+                    <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors">
+                        <div class="mb-4">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600 mb-2">Drag and drop your file here or</p>
+                        <label class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition-colors">
+                            Browse Files
+                            <input type="file" id="file-input" class="hidden" accept=".jpg,.jpeg,.pdf">
+                        </label>
+                        <p class="text-sm text-gray-500 mt-2">Supported formats: JPG, PDF</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Symptoms Analysis Section -->
+            <div id="symptoms-section" class="hidden">
+                <div class="mb-6">
+                    <label for="symptoms-input" class="block text-gray-700 text-sm font-bold mb-2">Describe Your Symptoms</label>
+                    <textarea id="symptoms-input" rows="6" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Please describe your symptoms in detail. For example: I've been experiencing severe headache for the past 3 days, along with fever and fatigue..."></textarea>
+                </div>
+                <button id="analyze-symptoms" class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    Analyze Symptoms
+                </button>
+            </div>
+
+            <!-- Medicine Information Section -->
+            <div id="medicine-section" class="hidden">
+                <div class="mb-6">
+                    <label for="medicine-input" class="block text-gray-700 text-sm font-bold mb-2">Medicine Details</label>
+                    <div class="space-y-4">
+                        <!-- Patient Information -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-600 text-sm mb-1">Patient Age</label>
+                                <input type="number" id="patient-age" min="0" max="150" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter age">
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 text-sm mb-1">Patient Gender</label>
+                                <select id="patient-gender" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Medicine Name -->
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-1">Medicine Name</label>
+                            <input type="text" id="medicine-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter medicine name">
+                        </div>
+
+                        <!-- Dosage Schedule -->
+                        <div>
+                            <label class="block text-gray-600 text-sm mb-1">Dosage Schedule</label>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-gray-500 text-xs mb-1">Morning (M)</label>
+                                    <input type="number" id="dosage-morning" min="0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-500 text-xs mb-1">Evening (E)</label>
+                                    <input type="number" id="dosage-evening" min="0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-500 text-xs mb-1">Night (N)</label>
+                                    <input type="number" id="dosage-night" min="0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="analyze-medicine" class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    Analyze Medicine
+                </button>
+            </div>
+
+            <div id="loading" class="hidden">
+                <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                    <p class="ml-3 text-gray-600">Analyzing your report...</p>
+                </div>
+            </div>
+
+            <div id="result" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800">Analysis Results</h2>
+                    <div class="flex space-x-2">
+                        <button id="translate-btn" class="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors">
+                            Translate to বাংলা
+                        </button>
+                        <button id="english-btn" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors">English</button>
+                        <button id="bangla-btn" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors hidden">বাংলা</button>
+                    </div>
+                </div>
+                <div id="english-content" class="prose max-w-none">
+                    <!-- English analysis content will be inserted here -->
+                </div>
+                <div id="bangla-content" class="prose max-w-none hidden">
+                    <!-- Bangla analysis content will be inserted here -->
+                </div>
+            </div>
+
+            <div id="error" class="hidden">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <p id="error-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
